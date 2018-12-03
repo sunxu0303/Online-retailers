@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>首页</title>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="css/public.css"/>
+    <link rel="stylesheet" type="text/css" href="css/iconfont.css"/>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav public-main-background-color">
+	    <h1 class="mui-title">首页</h1>
+	</header>
+	<nav class="mui-bar mui-bar-tab">
+		<a class="mui-tab-item mui-active" href="barItem/home.html">
+			<span class="mui-icon iconfont ">&#xe603</span>
+			<span class="mui-tab-label">首页</span>
+		</a>
+		<a class="mui-tab-item" href="barItem/category.html">
+			<span class="mui-icon iconfont ">&#xe60d</span>
+			<span class="mui-tab-label">分类</span>
+		</a>
+		<a class="mui-tab-item" href="barItem/wishList.html">
+			<span class="mui-icon iconfont ">&#xe614</span>
+			<span class="mui-tab-label">心愿单</span>
+		</a>
+		<a class="mui-tab-item" href="barItem/cart.html">
+			<span class="mui-icon iconfont ">&#xe601</span>
+			<span class="mui-tab-label">购物车</span>
+		</a>
+		<a class="mui-tab-item" href="barItem/mine.html">
+			<span class="mui-icon iconfont ">&#xe612</span>
+			<span class="mui-tab-label">我的</span>
+		</a>
+	</nav>
+	<script type="text/javascript" charset="utf-8">
+      	mui.init({
+      		swipeBack:false
+      	});
+      	var navTitle;
+		var mainWebview;
+		var curBarItemWebview;
+		
+		var barItemWebviewArray = [];
+		var barItemArray = ['barItem/home.html','barItem/category.html','barItem/wishList.html','barItem/cart.html','barItem/mine.html'];
+		mui.plusReady(function(){
+			navTitle = document.querySelector('.mui-title');
+			mainWebview = plus.webview.currentWebview();
+			
+			plus.navigator.setStatusBarBackground( "#FFC1C1" );
+			
+			plus.screen.lockOrientation("portrait-primary");
+			initIndexView();
+	
+			judgelogin();
+			
+			initTemplate();
+		});
+		
+		
+		function initIndexView(){
+			
+			inittabitemWebviews();
+			
+			tapBaritem();
+		}
+		
+		
+		function inittabitemWebviews(){
+			for (var i = 0; i < barItemArray.length; i++) {
+				barItemWebviewArray[i] = mui.preload({
+					id:barItemArray[i],
+					url:barItemArray[i],
+					styles:{
+						top:'44px',
+						bottom: '51px',
+						left: '0px',
+						bounce: 'vertical',
+						bounceBackground: '#f8f8f8'
+					},
+					waiting:{
+						autoShow:false
+					}
+				});
+				barItemWebviewArray[i].hide();
+				mainWebview.append(barItemWebviewArray[i]);
+			}
+			barItemWebviewArray[0].show();
+			curBarItemWebview = barItemWebviewArray[0];
+		}
+		
+		
+		function tapBaritem(){
+			mui('.mui-bar-tab').on('tap','.mui-tab-item',function(){
+				var baritem = this;
+				var baritemurl = baritem.getAttribute('href'); 
+				if (!~curBarItemWebview.getURL().indexOf(baritemurl)) {
+					for (var i = 0; i < barItemArray.length; i++) {
+						if (barItemArray[i] == baritemurl) {
+		
+							navTitle.innerText = baritem.children[baritem.children.length-1].innerText;
+					
+							barItemWebviewArray[i].show();
+							curBarItemWebview = barItemWebviewArray[i];
+							break;
+						}
+					}
+				}
+			});
+		}
+		
+		
+		function initTemplate(){
+			var webview =  mui.preload({
+				id:'template',
+				url:'template.html',
+				styles:{
+					top: '-1000px',
+				}
+			});
+			webview.show();
+		};
+		
+		function judgelogin() {
+		
+			localStorage.removeItem('user');
+
+			if (!localStorage.getItem('user')) {
+				mui.preload({
+					url:'mine/login.html',
+					id:'mine/login.html',
+					styles:{
+						top:'0px',
+						bottom:'0px'
+					}
+				});
+			}
+		}
+
+   </script>
+</body>
+</html>

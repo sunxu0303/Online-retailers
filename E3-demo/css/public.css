@@ -1,0 +1,84 @@
+	.public-left-nav-color {
+		color: white;
+	}
+	
+	.public-main-color {
+		color: #FFC1C1;
+	}
+	/*设置背景色*/
+	
+	.public-gray-color {
+		background-color: #f8f8f8;
+	}
+	
+	body {
+		background-color: #F8F8F8;
+	}
+	/*将返回按钮和导航条标题设置为白色*/
+	
+	.mui-icon-back:before,
+	.mui-icon-left-nav:before,
+	.mui-bar-nav .mui-title,
+	#rightBar:before {
+		color: white;
+	}
+	
+	.public-black-color {
+		color: black;
+	}
+	
+	.public-text-through {
+		text-decoration: line-through;
+	}
+	
+	.public-main-background-color {
+		background-color: #FFC1C1;
+	}
+	
+	.public-header-hidden {
+		display: none!important;
+	}
+	
+	.public-content-padding {
+		padding-top: 0 !important;
+	}
+	
+	.public-btn-green {
+		color: #fff;
+		border: 1px solid #41cea9;
+		background-color: #41cea9;
+	}
+	
+	.public-btn-green.mui-active:enabled,
+	.public-btn-green:enabled:active {
+		color: #fff;
+		border: 1px solid #41dfa9;
+		background-color: #41dfa9;
+	}
+	
+	.public-font-size {
+		font-size: 1em;
+	}
+	/*父子页面的loader*/
+	
+	.mui-bar .mui-action-back {
+		color: gray;
+	}
+	
+	.loader {
+		position: absolute;
+		top: 25%;
+		width: 100%;
+		height: 60%;
+		color: #888;
+		font-size: 14px;
+		text-align: center;
+	}
+	
+	.mui-content {
+		background-color: #F8F8F8;
+	}
+	
+ .mui-bar-tab .mui-tab-item.mui-active{
+ 	color: #FFC1C1;
+ }

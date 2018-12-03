@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>分类</title>
+		<link rel="stylesheet" type="text/css" href="../css/mui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/public.css"/>
+		<style type="text/css">
+			.mui-col-xs-4,
+			.mui-col-xs-8 {
+				height: 100%;
+				overflow-y: auto;
+			}
+			
+			.mui-segmented-control .mui-control-item {
+				line-height: 40px;
+				width: 100%;
+				text-align: center;
+				padding-right: 10px;
+			}
+			
+			.mui-segmented-control .mui-control-item img {
+				width: 25px;
+				vertical-align: middle;
+			}
+			
+			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+				background-color: #F9F9F9;
+				color: #41cea9;
+			}
+			
+			.mui-table-view-cell {
+				padding: 8px;
+				text-align: center;
+				background-color: #F9F9F9;
+			}
+			
+			.mui-table-view:after,
+			.mui-table-view-cell:after {
+				height: 0px;
+			}
+			
+			.mui-segmented-control.mui-segmented-control-inverted.mui-segmented-control-vertical .mui-control-item,
+			.mui-segmented-control.mui-segmented-control-inverted.mui-segmented-control-vertical .mui-control-item.mui-active {
+				border-bottom: none;
+			}
+			
+			.mui-control-content {
+				font-size: 0.9em;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content mui-row mui-fullscreen">
+			<div class="mui-col-xs-4" style="background: white;">
+				<div id="categoryStair" class="mui-segmented-control mui-segmented-control-inverted mui-segmented-control-vertical">
+				</div>
+			</div>
+			<div id="categoryMovers" class="mui-col-xs-8" style="background: #F9F9F9;">
+				<div id="category3387" class="mui-control-content mui-active">
+
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/public.js"></script>
+		<script type="text/javascript">
+			mui.init({
+				swipeBack: false
+			})
+			var categoryWebview; 
+			var categoryStair = []; 
+			var categoryMovers = []; 
+			var categoryHtml = []; 
+			var categoryStairHtml; 
+			var categoryMoversHtml; 
+			var parentWebView; 
+			mui.plusReady(function() {
+				
+					setSubWebviewBounce('none');
+					categoryWebview = plus.webview.currentWebview();
+					categoryStairHtml = document.getElementById('categoryStair');
+					categoryMoversHtml = document.getElementById('categoryMovers');
+					parentWebView = plus.webview.currentWebview().parent();
+					
+					addCategoryEvent();
+					
+					initFirstCategoryData();
+					
+					initSecondCategoryData(0);
+				})
+				
+			function addCategoryEvent() {
+				
+				mui('#categoryStair').on('tap', '.mui-control-item', function() {
+					var item = this;
+					get_sub_categoryByParentID(item.getAttribute('href').substring(9));
+				});
+				
+				
+				mui('#categoryMovers').on('tap', '.mui-table-view-cell a', function() {
+					var categoryA = this;
+					var id = 'category/category-detail-new-needtem.html';
+					var title = categoryA.innerText;
+					var href = 'category/category-detail-new-needtem.html';
+					var categoryID = categoryA.getAttribute('href');
+					
+					pushWebView({
+						webType: 'newWebview_First',
+						id: id,
+						href: href,
+						aniShow: getaniShow(),
+						title: title,
+						isBars: false,
+						barsIcon: '',
+						extendOptions: {categoryID:categoryID}
+					})
+				});
+			}
+			
+			function initFirstCategoryData() {
+				for (var i = 0; i < 10; i++) {
+					var item = {};
+					item.id = i;
+					item.name = '分类' + i;
+					item.imageurl = '../img/category.png';
+					categoryStair[i] = item;
+					var html = '<a class="mui-control-item" href="#category' + categoryStair[i].id + '"><span><img src="' + categoryStair[i].imageurl + '"/>&nbsp&nbsp</span>' + categoryStair[i].name + '</a>';
+					categoryHtml.push(html);
+				}
+				
+				categoryStairHtml.innerHTML = categoryHtml.join('');
+	
+				document.querySelector('.mui-control-item').classList.add('mui-active');
+			
+				categoryHtml = [];
+			}
+		
+			function initSecondCategoryData(parentId) {
+				var categorysub = {};
+				categorysub.parentID = parentId;
+				categorysubarray = [];
+				for (var i = 0; i < 20; i++) {
+					var subitem = {};
+					subitem.categoryID = i;
+					subitem.productName = parentId +'子分类' + i;
+					categorysubarray[i] = subitem;
+				}
+				categorysub.categorysubarray = categorysubarray;
+				
+				var item = get_categoryMoversStateByID(parentId);
+				if (item && item.categorysubarray.length > 0) {
+					return;
+				}
+				categoryMovers.push(categorysub);
+				createSubCategoryHtml(categorysub);
+				setCurSubCategory();
+			}
+			
+			function createSubCategoryHtml(categorysub) {
+				var html = '<div id="category' + categorysub.parentID + '" class="mui-control-content"><ul class="mui-table-view">';
+				mui.each(categorysub.categorysubarray, function(index, item) {
+					html = html + '<li class="mui-table-view-cell"><a href ="' + item.categoryID + '">' + item.productName + '</a></li>';
+				});
+				html = html + '</ul></div>';
+				console.log(html);
+				categoryHtml.push(html);
+				categoryMoversHtml.innerHTML = categoryHtml.join('');
+			}
+			
+			function get_sub_categoryByParentID(parentID) {
+				
+				var item = get_categoryMoversStateByID(parentID);
+				if (item && item.categorysubarray.length > 0) {
+					return;
+				}
+				
+				initSecondCategoryData(parentID);
+			}
+
+			function setCurSubCategory() {
+				var stairslist = document.querySelectorAll('.mui-control-item');
+				var moversList = document.querySelectorAll('.mui-control-content');
+				var curItem;
+				for (var i = 0; i < stairslist.length; i++) {
+					if (stairslist[i].classList.contains('mui-active')) {
+						curItem = stairslist[i];
+						break;
+					}
+				}
+				var curstairsID = curItem.getAttribute('href').substring(9);
+				var showItem = null;
+				for (var i = 0; i < moversList.length; i++) {
+					if (moversList[i].id.substring(8) == curstairsID) {
+						showItem = moversList[i];
+						break;
+					}
+				}
+				
+				if (showItem) {
+					showItem.classList.add('mui-active');
+				} else {
+					get_sub_categoryByParentID(curstairsID);
+				}
+			}
+
+			function get_categoryMoversStateByID(parentID) {
+				for (var i = 0; i < categoryMovers.length; i++) {
+					if (categoryMovers[i].parentID == parentID) {
+						return categoryMovers[i];
+					}
+				}
+				return null;
+			}
+		</script>
+	</body>
+
+</html>
